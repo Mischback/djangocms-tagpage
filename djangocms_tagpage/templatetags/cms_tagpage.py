@@ -4,8 +4,10 @@
 
 # Django imports
 from django import template
+from django.core.urlresolvers import reverse, NoReverseMatch
 # DjangoCMS imports
 from cms.api import get_page_draft
+from cms.models import Page
 # external app imports
 from taggit.models import Tag, TaggedItem
 # app imports
@@ -39,8 +41,36 @@ def get_tags(context, limit=None):
     if not tagged_items:
         # just return the tags in use
         # @todo: Make this configurable?!
-        tagged_items = TaggedItem.objects.all().values_list('tag_id', flat=True)
+        tagged_items = TaggedItem.objects.all()
+    
+    tagged_items = tagged_items.values_list('tag_id', flat=True)
 
     tags = tags.filter(id__in=tagged_items)
 
+    # add the URL to the tag, if the cms app is used
+    try:
+        for t in tags:
+            t.url = reverse('tag_detail', args=[t.slug])
+    except NoReverseMatch:
+        # fail silently
+        pass
+
     return tags
+
+@register.assignment_tag(takes_context=True)
+def get_tagged_pages(context, tag):
+    """
+    @brief  Fetches all pages with a given tag
+    """
+    current_tag = Tag.objects.get(slug=tag).id
+
+    # get all TaggedItems associated with this Tag object
+    tagged_items = TaggedItem.objects.filter(tag_id=current_tag).values_list('object_id', flat=True)
+
+    # get all corresponding PageTags
+    tagged_pages = PageTags.objects.filter(id__in=tagged_items).values_list('extended_object_id', flat=True)
+
+    # get all corresponding Page objects
+    pages = Page.objects.filter(id__in=tagged_pages)
+
+    return pages
