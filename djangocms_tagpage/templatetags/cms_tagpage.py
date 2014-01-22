@@ -41,7 +41,9 @@ def get_tags(context, limit=None):
     if not tagged_items:
         # just return the tags in use
         # @todo: Make this configurable?!
-        tagged_items = TaggedItem.objects.all().values_list('tag_id', flat=True)
+        tagged_items = TaggedItem.objects.all()
+    
+    tagged_items = tagged_items.values_list('tag_id', flat=True)
 
     tags = tags.filter(id__in=tagged_items)
 
