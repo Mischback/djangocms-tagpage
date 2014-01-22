@@ -8,5 +8,6 @@ from django.conf.urls import patterns, url
 from .import views
 
 urlpatterns = patterns('',
-
+    url(r'^$', views.tag_overview, name='tag_overview'),
+    url(r'^(?P<tag_name>\w+)/$', views.tag_detail, name='tag_detail'),
 )
