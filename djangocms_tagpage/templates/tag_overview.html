@@ -7,8 +7,12 @@
 {% load cms_tagpage %}
 <h1>Tags</h1>
 {% get_tags as tags %}
-{% for i in tags %}
-    {{ i }}
+{% for t in tags %}
+    {% if t.url %}
+        <a href="{{ t.url }}">{{ t }}</a>
+    {% else %}
+        {{ t }}
+    {% endif %}
 {% endfor %}
     </body>
 </html>

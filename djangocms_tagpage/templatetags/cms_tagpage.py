@@ -4,6 +4,7 @@
 
 # Django imports
 from django import template
+from django.core.urlresolvers import reverse, NoReverseMatch
 # DjangoCMS imports
 from cms.api import get_page_draft
 # external app imports
@@ -42,5 +43,13 @@ def get_tags(context, limit=None):
         tagged_items = TaggedItem.objects.all().values_list('tag_id', flat=True)
 
     tags = tags.filter(id__in=tagged_items)
+
+    # add the URL to the tag, if the cms app is used
+    try:
+        for t in tags:
+            t.url = reverse('tag_detail', args=[t.slug])
+    except NoReverseMatch:
+        # fail silently
+        pass
 
     return tags
