@@ -4,7 +4,11 @@
         <title>Tags - Overview</title>
     </head>
     <body>
-{% load cms_tagpage %}
+{% load cms_tags cms_tagpage %}
 <h1>Tag {{ tag_name }}</h1>
+{% get_tagged_pages tag_name as pages %}
+{% for p in pages %}
+    <a href="{% page_url p.id %}">{{ p }}</a>
+{% endfor %}
     </body>
 </html>

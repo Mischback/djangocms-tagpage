@@ -7,6 +7,7 @@ from django import template
 from django.core.urlresolvers import reverse, NoReverseMatch
 # DjangoCMS imports
 from cms.api import get_page_draft
+from cms.models import Page
 # external app imports
 from taggit.models import Tag, TaggedItem
 # app imports
@@ -53,3 +54,21 @@ def get_tags(context, limit=None):
         pass
 
     return tags
+
+@register.assignment_tag(takes_context=True)
+def get_tagged_pages(context, tag):
+    """
+    @brief  Fetches all pages with a given tag
+    """
+    current_tag = Tag.objects.get(slug=tag).id
+
+    # get all TaggedItems associated with this Tag object
+    tagged_items = TaggedItem.objects.filter(tag_id=current_tag).values_list('object_id', flat=True)
+
+    # get all corresponding PageTags
+    tagged_pages = PageTags.objects.filter(id__in=tagged_items).values_list('extended_object_id', flat=True)
+
+    # get all corresponding Page objects
+    pages = Page.objects.filter(id__in=tagged_pages)
+
+    return pages
