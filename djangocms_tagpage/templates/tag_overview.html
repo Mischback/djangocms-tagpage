@@ -1,1 +1,14 @@
-tag_overview
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>Tags - Overview</title>
+    </head>
+    <body>
+{% load cms_tagpage %}
+<h1>Tags</h1>
+{% get_tags as tags %}
+{% for i in tags %}
+    {{ i }}
+{% endfor %}
+    </body>
+</html>
