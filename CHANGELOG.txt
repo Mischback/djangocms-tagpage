@@ -1,0 +1,7 @@
+beta 1 (23.01.2014)
+* initial release
+* extended pagemodel created
+* use the CMStoolbar to create/modify/delete tags
+* make the administration backend work
+* created cms app to provide tag specific pages
+* templatetags created
