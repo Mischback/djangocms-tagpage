@@ -21,6 +21,7 @@ from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy, ugettext as _
 # DjangoCMS imports
 from cms.extensions import PageExtensionAdmin
+from cms.api import get_page_draft
 # app imports
 from .models import PageTags
 
@@ -73,7 +74,6 @@ class PageTagsAdmin(PageExtensionAdmin):
                     obj_display = force_text(obj)
                     modeladmin.log_deletion(request, obj, obj_display)
                     obj.delete()
-                # queryset.delete()
                 modeladmin.message_user(request, _("Successfully deleted %(count)d %(items)s.") % {
                     "count": n, "items": model_ngettext(modeladmin.opts, n)
                 }, messages.SUCCESS)
@@ -103,11 +103,10 @@ class PageTagsAdmin(PageExtensionAdmin):
         }
 
         # Display the confirmation page
-        return TemplateResponse(request, modeladmin.delete_selected_confirmation_template or [
-            "admin/%s/%s/delete_selected_confirmation.html" % (app_label, opts.model_name),
-            "admin/%s/delete_selected_confirmation.html" % app_label,
-            "admin/delete_selected_confirmation.html"
-        ], context, current_app=modeladmin.admin_site.name)
+        return TemplateResponse(request, modeladmin.delete_selected_confirmation_template,
+            context, current_app=modeladmin.admin_site.name)
+
+    custom_delete_selected.short_description = 'Delete selected items'
 
 
     def is_draft_page(self, page):
