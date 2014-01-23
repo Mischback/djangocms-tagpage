@@ -35,6 +35,9 @@ class PageTagsAdmin(PageExtensionAdmin):
     delete_selected_confirmation_template = 'djangocms_pagetags_delete_selected_confirmation.html'
 
     def get_actions(self, request):
+        """
+        @brief  Removes the default delete_selected() function
+        """
         actions = super(PageTagsAdmin, self).get_actions(request)
         del actions['delete_selected']
         return actions
@@ -48,6 +51,12 @@ class PageTagsAdmin(PageExtensionAdmin):
         childs (foreignkeys), a "permission denied" message.
 
         Next, it deletes all selected objects and redirects back to the change list.
+
+        This function is directly taken from the Django core and modified to
+        use the PageTags object's delete() method instead of the
+        queryset.delete().
+
+        Everything else is kept original to provide a consistent look and feel.
         """
         opts = modeladmin.model._meta
         app_label = opts.app_label
