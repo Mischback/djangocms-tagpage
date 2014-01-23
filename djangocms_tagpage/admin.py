@@ -11,13 +11,14 @@ CMSToolbar of DjangoCMS.
 """
 
 # Django imports
-from django.contrib import admin
+from django.core.exceptions import PermissionDenied
+from django.contrib import admin, messages
 from django.contrib.admin import helpers
-from django.contrib.admin.util import get_deleted_objects
+from django.contrib.admin.util import get_deleted_objects, model_ngettext
 from django.db import router
 from django.template.response import TemplateResponse
 from django.utils.encoding import force_text
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy, ugettext as _
 # DjangoCMS imports
 from cms.extensions import PageExtensionAdmin
 # app imports
@@ -71,8 +72,8 @@ class PageTagsAdmin(PageExtensionAdmin):
                 for obj in queryset:
                     obj_display = force_text(obj)
                     modeladmin.log_deletion(request, obj, obj_display)
-                raise RuntimeError('custom function')
-                queryset.delete()
+                    obj.delete()
+                # queryset.delete()
                 modeladmin.message_user(request, _("Successfully deleted %(count)d %(items)s.") % {
                     "count": n, "items": model_ngettext(modeladmin.opts, n)
                 }, messages.SUCCESS)
